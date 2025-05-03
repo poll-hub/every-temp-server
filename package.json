@@ -1,0 +1,22 @@
+{
+  "name": "every-temp-server",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/poll-hub/every-temp-server.git"
+  },
+  "author": "gonudayo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/poll-hub/every-temp-server/issues"
+  },
+  "homepage": "https://github.com/poll-hub/every-temp-server#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
