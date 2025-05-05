@@ -1,18 +1,15 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
+const http = require("http");
+const { Server } = require("socket.io");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const initializeSocket = require("./src/sockets");
 
-const port = process.env.PORT || 8000;
-const app = express();
-
-const allowedOrigins = [
-  "http://localhost:3000", // 로컬 클라이언트
-];
+const allowedOrigin = process.env.CLIENT_URL || "http://localhost:3000";
 
 const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || origin === allowedOrigin) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
@@ -21,21 +18,25 @@ const corsOptions = {
   credentials: true,
 };
 
+const app = express();
 app.use(cors(corsOptions));
+app.use(cookieParser());
 app.use(express.json());
-dotenv.config();
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigin,
+    methods: ["GET", "POST"],
+  },
 });
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(async () => {
-    console.log("Connected to MongoDB");
-  })
-  .catch((error) => console.log(`MongoDB error: ${error}`));
+initializeSocket(io); // Socket.IO 핸들러 초기화
 
 const users = require("./src/routes/users");
+const rooms = require("./src/routes/rooms");
 
 app.use("/api/v1/users", users);
+app.use("/api/v1/rooms", rooms);
+
+module.exports = app;
