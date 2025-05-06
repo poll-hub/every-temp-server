@@ -16,6 +16,12 @@ const userSchema = new mongoose.Schema(
     picture: {
       type: String,
     },
+    rooms: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Room",
+      },
+    ],
   },
   {
     versionKey: false,
