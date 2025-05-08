@@ -35,6 +35,41 @@ const post = {
       });
     }
   },
+  edit: async (req, res) => {
+    const { idToken, name, picture } = req.body;
+
+    console.log(idToken);
+
+    try {
+      const { googleId } = await verifyGoogleToken(idToken);
+
+      const user = await User.findOneAndUpdate(
+        { googleId },
+        {
+          name: req.body.name,
+        },
+        { new: true }
+      ).lean();
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: "존재하지 않는 유저 입니다.",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        user,
+      });
+    } catch (error) {
+      console.log(error.message);
+      res.status(401).json({
+        success: false,
+        message: "Invalid Google token",
+      });
+    }
+  },
 };
 
 module.exports = {
